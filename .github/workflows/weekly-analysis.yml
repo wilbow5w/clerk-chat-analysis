@@ -1,9 +1,11 @@
 name: Weekly Conversation Analysis
 
 on:
+  push:
+    branches: [ main ]
   schedule:
-    - cron: '0 9 * * MON'  # Runs at 9:00 AM UTC every Monday
-  workflow_dispatch:        # Allows manual trigger
+    - cron: '0 9 * * MON'
+  workflow_dispatch:
 
 jobs:
   analyze-conversations:
@@ -35,5 +37,5 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add conversation_analysis.md
-        git commit -m "Update analysis report"
-        git push
+        git commit -m "Update analysis report" || echo "No changes to commit"
+        git push || echo "No changes to push"
