@@ -1,0 +1,39 @@
+name: Weekly Conversation Analysis
+
+on:
+  schedule:
+    - cron: '0 9 * * MON'  # Runs at 9:00 AM UTC every Monday
+  workflow_dispatch:        # Allows manual trigger
+
+jobs:
+  analyze-conversations:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas openai python-dotenv
+
+    - name: Set up environment variables
+      run: |
+        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+
+    - name: Run analysis
+      run: |
+        python run_analysis.py
+
+    - name: Commit and push report
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add conversation_analysis.md
+        git commit -m "Update analysis report"
+        git push
